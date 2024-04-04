@@ -31,4 +31,8 @@
     <Folder Include="Logs\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\PostgreSql.Data\PostgreSql.Data.csproj" />
+  </ItemGroup>
+
 </Project>

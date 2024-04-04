@@ -15,6 +15,8 @@ using NZWalks.API.Middlewares;
 using Asp.Versioning;
 using Asp.Versioning.ApiExplorer;
 using NZWalks.API;
+using PostgreSql;
+using PostgreSql.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -78,11 +80,14 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
 
 builder.Services.AddDbContext<NZWalksDBContext>(
-    options => options.UseSqlServer(builder.Configuration.GetConnectionString("NZWalksConnectionString")));
+    options => options.UseSqlServer(builder.Configuration.GetConnectionString("NZWalksConnectionString"), b => b.MigrationsAssembly("NZWalks.API")));
 
 builder.Services.AddDbContext<NZWalksAuthDbContext>(
-    options => options.UseSqlServer(builder.Configuration.GetConnectionString("NZWalksAuthConnectionString")));
+    options => options.UseSqlServer(builder.Configuration.GetConnectionString("NZWalksAuthConnectionString"), b => b.MigrationsAssembly("NZWalks.API")));
 
+builder.Services.AddDbContext<PostgreSql.Data.PostgreSqlDbContext>(
+    options => options.UseNpgsql(builder.Configuration.GetConnectionString("PostgreConnectionString"), b => b.MigrationsAssembly("PostgreSql.Data")));
+builder.Services.AddScoped<DbContext>(provider => provider.GetService<PostgreSqlDbContext>());
 builder.Services.AddScoped<IRegionRepository, SQLRegionRepository>();
 builder.Services.AddScoped<IWalkRepository, SqlWalkRepository>();
 builder.Services.AddScoped<ITokenRepository, TokenRepository>();
